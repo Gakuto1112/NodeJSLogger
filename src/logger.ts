@@ -1,70 +1,69 @@
+/******** オブジェクト型 ********/
+
 /**
- * ログの標準出力ライブラリ
+ * モジュールのオプションの型
  */
-export class Logger {
-    /**
-     * 色付きログ出力を有効にするかどうか
-     */
-    private readonly colorLog: boolean;
-    /**
-     * デバッグログを出力するかどうか
-     */
-    private readonly logDebug: boolean;
+type Options = {
+    /** 色付きログを出力するかどうか */
+    coloredLog: boolean,
+    /** デバッグレベルのログを出力するかどうか */
+    logDebugLevel: boolean
+}
 
-    constructor(colorLog: boolean, logDebug: boolean) {
-        this.colorLog = colorLog;
-        this.logDebug = logDebug;
-    }
+/******** グローバル変数 ********/
 
-    /**
-     * 現在の日付時刻を示す文字列を返す。
-     * @returns 現在の日付時刻を示す文字列
-     */
-    private getDateTimeString(): string {
-        return new Date().toLocaleString();
-    }
+/**
+ * モジュールのオプション
+ */
+const options: Options = {
+    coloredLog: false,
+    logDebugLevel: false
+}
 
-    /**
-     * ログ関数の呼び出し元のファイルパスを取得する。
-     * @returns ログ関数の呼び出し元のファイルパス。パスが取得できなかったらundefinedを返す。
-     */
-    private getCallerFilePath(): string|undefined {
-        const error: Error = new Error();
-        if(error.stack) {
-            const filePath = error.stack.split("\n")[3].replace(/\\/g, "/").match(new RegExp(`(?<=${process.cwd().replace(/\\/g, "/")}/node_modules/@gakuto1112/minecraft-discord-chat-sync/out/).+(?=:\\d+:\\d+)`));
-            if(filePath) return filePath.toString();
-        }
-    }
+/******** 関数 ********/
 
-    /**
-     * 標準出力にログを出力する。logDebugがfalseなら出力されない。ログレベル：デバッグ
-     * @param message 出力するメッセージ
-     */
-    public debug(message: string): void {
-        if(this.logDebug) console.debug(this.colorLog ? `[${this.getDateTimeString()}] [${this.getCallerFilePath()}] [\u001b[34mDEBUG\u001b[0m]: ${message}` : `[${this.getDateTimeString()}] [${this.getCallerFilePath()}] [DEBUG]: ${message}`);
+/**
+ * ログ関数の呼び出し元のファイルパスを取得する。
+ * @returns ログ関数の呼び出し元のファイルパス。パスが取得できなかったらundefinedを返す。
+ */
+function getCallerFilePath(): string|undefined {
+    const error: Error = new Error();
+    if(error.stack) {
+        const filePath = error.stack.split("\n")[3].replace(/\\/g, "/").match(new RegExp(`(?<=\\(${process.cwd().replace(/\\/g, "/")}).+(?=:\\d+:\\d+\\))`));
+        if(filePath) return filePath.toString();
     }
+}
 
-    /**
-     * 標準出力にログを出力する。ログレベル：標準
-     * @param message 出力するメッセージ
-     */
-    public info(message: string): void {
-        console.info(this.colorLog ? `[${this.getDateTimeString()}] [${this.getCallerFilePath()}] [\u001b[32mINFO\u001b[0m]: ${message}` : `[${this.getDateTimeString()}] [${this.getCallerFilePath()}] [INFO]: ${message}`);
-    }
+/******** ログ関数 ********/
 
-    /**
-     * 標準出力にログを出力する。ログレベル：警告
-     * @param message 出力するメッセージ
-     */
-    public warn(message: string): void {
-        console.warn(this.colorLog ? `[${this.getDateTimeString()}] [${this.getCallerFilePath()}] [\u001b[33mWARN\u001b[0m]: ${message}` : `[${this.getDateTimeString()}] [${this.getCallerFilePath()}] [WARN]: ${message}`);
-    }
+/**
+ * 標準出力にログを出力する。logDebugがfalseなら出力されない。ログレベル：デバッグ
+ * @param message 出力するメッセージ
+ */
+export function debug(message: string): void {
+    if(options.logDebugLevel) console.debug(options.coloredLog ? `[${new Date().toLocaleString()}] [${getCallerFilePath()}] [\u001b[34mDEBUG\u001b[0m]: ${message}` : `[${new Date().toLocaleString()}] [${getCallerFilePath()}] [DEBUG]: ${message}`);
+}
 
-    /**
-     * 標準出力にログを出力する。ログレベル：エラー
-     * @param message 出力するメッセージ
-     */
-    public error(message: string): void {
-        console.error(this.colorLog ? `[${this.getDateTimeString()}] [${this.getCallerFilePath()}] [\u001b[31mERROR\u001b[0m]: ${message}` : `[${this.getDateTimeString()}] [${this.getCallerFilePath()}] [ERROR]: ${message}`);
-    }
+/**
+ * 標準出力にログを出力する。ログレベル：標準
+ * @param message 出力するメッセージ
+ */
+export function info(message: string): void {
+    console.info(options.coloredLog ? `[${new Date().toLocaleString()}] [${getCallerFilePath()}] [\u001b[32mINFO\u001b[0m]: ${message}` : `[${new Date().toLocaleString()}] [${getCallerFilePath()}] [INFO]: ${message}`);
+}
+
+/**
+ * 標準出力にログを出力する。ログレベル：警告
+ * @param message 出力するメッセージ
+ */
+export function warn(message: string): void {
+    console.warn(options.coloredLog ? `[${new Date().toLocaleString()}] [${getCallerFilePath()}] [\u001b[33mWARN\u001b[0m]: ${message}` : `[${new Date().toLocaleString()}] [${getCallerFilePath()}] [WARN]: ${message}`);
+}
+
+/**
+ * 標準出力にログを出力する。ログレベル：エラー
+ * @param message 出力するメッセージ
+ */
+export function error(message: string): void {
+    console.error(options.coloredLog ? `[${new Date().toLocaleString()}] [${getCallerFilePath()}] [\u001b[31mERROR\u001b[0m]: ${message}` : `[${new Date().toLocaleString()}] [${getCallerFilePath()}] [ERROR]: ${message}`);
 }
