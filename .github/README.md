@@ -1,5 +1,5 @@
 # NodeJSLogger
-This module formats log outputs to make it easy to see!
+This module formats log outputs to make them easy to see!
 
 It adds date and time when the log output, file name that calls log functions, and log type.
 
