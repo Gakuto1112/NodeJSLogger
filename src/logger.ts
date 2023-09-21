@@ -1,30 +1,30 @@
-/******** オブジェクト型 ********/
+/******** OBJECT TYPES ********/
 
 /**
- * モジュールのオプションの型
+ * Module options type
  */
 type Options = {
-    /** 色付きログを出力するかどうか。ファイル出力の場合は非推奨（制御文字がそのまま出力されるため） */
+    /** Whether to output colored logs or not. Deprecated for file output (because control characters are output as normal characters). */
     coloredLog: boolean,
-    /** デバッグレベルのログを出力するかどうか */
+    /** Whether to output debug level logs or not. */
     logDebugLevel: boolean
 }
 
-/******** グローバル変数 ********/
+/******** GLOBAL VARIABLES ********/
 
 /**
- * モジュールのオプション
+ * Module options
  */
 const options: Options = {
     coloredLog: false,
     logDebugLevel: false
 }
 
-/******** 関数 ********/
+/******** FUNCTIONS ********/
 
 /**
- * ログ関数の呼び出し元のファイルパスを取得する。
- * @returns ログ関数の呼び出し元のファイルパス。パスが取得できなかったらundefinedを返す。
+ * Gets the full file path of the file that called this function.
+ * @returns The full file path of the file that called this function. Returns `undefined` is the file path cannot be obtained.
  */
 function getCallerFilePath(): string|undefined {
     const error: Error = new Error();
@@ -34,53 +34,53 @@ function getCallerFilePath(): string|undefined {
     }
 }
 
-/******** オプション操作関数 ********/
+/******** OPTION CONTROL FUNCTIONS ********/
 
 /**
- * デバッグレベルのログを出力するかどうかを設定する。
- * @param newValue 設定する新しい値
+ * Sets whether to output colored logs or not.
+ * @param newValue New value
  */
 export function setColoredLog(newValue: boolean): void {
     options.coloredLog = newValue;
 }
 
 /**
- * 色付きログを出力するかどうかを設定する。
- * @param newValue 設定する新しい値
+ * Sets whether to output debug level logs or not.
+ * @param newValue New value
  */
 export function setLogDebugLevel(newValue: boolean): void {
     options.logDebugLevel = newValue;
 }
 
-/******** ログ関数 ********/
+/******** LOG FUNCTIONS ********/
 
 /**
- * 標準出力にログを出力する。logDebugがfalseなら出力されない。ログレベル：デバッグ
- * @param message 出力するメッセージ
+ * Outputs a log message. It won't be output if `logDebugLevel` is `false`. Log level: **DEBUG**
+ * @param message A message to output
  */
 export function debug(message: string): void {
     if(options.logDebugLevel) console.debug(options.coloredLog ? `[${new Date().toLocaleString()}] [${getCallerFilePath()}] [\u001b[34mDEBUG\u001b[0m]: ${message}` : `[${new Date().toLocaleString()}] [${getCallerFilePath()}] [DEBUG]: ${message}`);
 }
 
 /**
- * 標準出力にログを出力する。ログレベル：標準
- * @param message 出力するメッセージ
+ * Outputs an information message. Log level: **INFO**
+ * @param message A message to output
  */
 export function info(message: string): void {
     console.info(options.coloredLog ? `[${new Date().toLocaleString()}] [${getCallerFilePath()}] [\u001b[32mINFO\u001b[0m]: ${message}` : `[${new Date().toLocaleString()}] [${getCallerFilePath()}] [INFO]: ${message}`);
 }
 
 /**
- * 標準出力にログを出力する。ログレベル：警告
- * @param message 出力するメッセージ
+ * Outputs a warning message. Log level: **WARN**
+ * @param message A message to output
  */
 export function warn(message: string): void {
     console.warn(options.coloredLog ? `[${new Date().toLocaleString()}] [${getCallerFilePath()}] [\u001b[33mWARN\u001b[0m]: ${message}` : `[${new Date().toLocaleString()}] [${getCallerFilePath()}] [WARN]: ${message}`);
 }
 
 /**
- * 標準出力にログを出力する。ログレベル：エラー
- * @param message 出力するメッセージ
+ * Outputs an error message. Log level: **ERROR**
+ * @param message A message to output
  */
 export function error(message: string): void {
     console.error(options.coloredLog ? `[${new Date().toLocaleString()}] [${getCallerFilePath()}] [\u001b[31mERROR\u001b[0m]: ${message}` : `[${new Date().toLocaleString()}] [${getCallerFilePath()}] [ERROR]: ${message}`);
