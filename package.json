@@ -2,6 +2,11 @@
   "name": "nodejs-logger",
   "version": "1.0.0",
   "description": "Logger module that formats stdout to make it easy to see",
+  "main": "out/logger.js",
+  "files": [
+    "out/",
+    "tsconfig.json"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Gakuto1112/NodeJSLogger.git"
