@@ -4,7 +4,7 @@
  * Module options type
  */
 type Options = {
-    /** Whether to output colored logs or not. Deprecated for file output (because control characters are output as normal characters). */
+    /** Whether to output colored logs or not. Deprecated for file output (because control characters are outputted as normal characters). */
     coloredLog: boolean,
     /** Whether to output debug level logs or not. */
     logDebugLevel: boolean
@@ -55,7 +55,7 @@ export function setLogDebugLevel(newValue: boolean): void {
 /******** LOG FUNCTIONS ********/
 
 /**
- * Outputs a log message. It won't be output if `logDebugLevel` is `false`. Log level: **DEBUG**
+ * Outputs a log message. It won't be outputted if `logDebugLevel` is `false`. Log level: **DEBUG**
  * @param message A message to output
  */
 export function debug(message: string): void {

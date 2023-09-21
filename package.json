@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Logger module that formats stdout to make it easy to see",
   "main": "out/logger.js",
+  "scripts": {
+    "prepack": "tsc"
+  },
   "files": [
     "out/",
     "tsconfig.json"
