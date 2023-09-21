@@ -4,7 +4,7 @@
  * モジュールのオプションの型
  */
 type Options = {
-    /** 色付きログを出力するかどうか */
+    /** 色付きログを出力するかどうか。ファイル出力の場合は非推奨（制御文字がそのまま出力されるため） */
     coloredLog: boolean,
     /** デバッグレベルのログを出力するかどうか */
     logDebugLevel: boolean
@@ -32,6 +32,24 @@ function getCallerFilePath(): string|undefined {
         const filePath = error.stack.split("\n")[3].replace(/\\/g, "/").match(new RegExp(`(?<=\\(${process.cwd().replace(/\\/g, "/")}).+(?=:\\d+:\\d+\\))`));
         if(filePath) return filePath.toString();
     }
+}
+
+/******** オプション操作関数 ********/
+
+/**
+ * デバッグレベルのログを出力するかどうかを設定する。
+ * @param newValue 設定する新しい値
+ */
+export function setColoredLog(newValue: boolean): void {
+    options.coloredLog = newValue;
+}
+
+/**
+ * 色付きログを出力するかどうかを設定する。
+ * @param newValue 設定する新しい値
+ */
+export function setLogDebugLevel(newValue: boolean): void {
+    options.logDebugLevel = newValue;
 }
 
 /******** ログ関数 ********/
