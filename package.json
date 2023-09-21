@@ -1,0 +1,18 @@
+{
+  "name": "nodejs-logger",
+  "version": "1.0.0",
+  "description": "Logger module that formats stdout to make it easy to see",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Gakuto1112/NodeJSLogger.git"
+  },
+  "keywords": [
+    "logger"
+  ],
+  "author": "Gakuto1112",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Gakuto1112/NodeJSLogger/issues"
+  },
+  "homepage": "https://github.com/Gakuto1112/NodeJSLogger"
+}
