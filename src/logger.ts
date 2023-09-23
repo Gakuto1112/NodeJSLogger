@@ -5,7 +5,7 @@
  */
 type Options = {
     /** Root path of this module. Logs include relative paths from the root path to the caller path. */
-    rootPath: string,
+    rootPath: string[],
     /** Whether to output colored logs or not. Deprecated for file output (because control characters are outputted as normal characters). */
     coloredLog: boolean,
     /** Whether to output debug level logs or not. */
@@ -18,7 +18,7 @@ type Options = {
  * Module options
  */
 const options: Options = {
-    rootPath: process.cwd().replace(/\\/g, "/"),
+    rootPath: process.cwd().replace(/\\/g, "/").split("/"),
     coloredLog: false,
     logDebugLevel: false
 }
@@ -32,8 +32,23 @@ const options: Options = {
 function getCallerFilePath(): string|undefined {
     const error: Error = new Error();
     if(error.stack) {
-        const filePath = error.stack.split("\n")[3].replace(/\\/g, "/").match(new RegExp(`(?<=\\(${options.rootPath}).+(?=:\\d+:\\d+\\))`));
-        if(filePath) return filePath.toString();
+        const callerPath: string[] = (error.stack.split("\n")[3].replace(/\\/g, "/").match(new RegExp("(?<=\\().+(?=:\\d+:\\d+\\))")) as RegExpMatchArray)[0].split("/");
+        let depthIndex: number = 0;
+        for(depthIndex = 0; depthIndex < Math.min(options.rootPath.length, callerPath.length); depthIndex++) {
+            if(options.rootPath[depthIndex] != callerPath[depthIndex]) break;
+        }
+        if(depthIndex == 0) {
+            //The caller path is completely different from the root path.
+            return callerPath.join("/");
+        }
+        else if(depthIndex < options.rootPath.length) {
+            //The caller path is branching off from hte middle of the root path.
+            return `${"../".repeat(options.rootPath.length - depthIndex - 1)}${callerPath.slice(depthIndex - callerPath.length).join("/")}`;
+        }
+        else {
+            //The caller path is followed by the root path.
+            return `./${callerPath.slice(depthIndex - callerPath.length).join("/")}`;
+        }
     }
 }
 
