@@ -1,3 +1,6 @@
+import fs from "fs";
+import { InvalidPathError } from "./invalid_path_error";
+
 /******** OBJECT TYPES ********/
 
 /**
@@ -34,7 +37,7 @@ function getCallerFilePath(): string|undefined {
     if(error.stack) {
         const callerPath: string[] = (error.stack.split("\n")[3].replace(/\\/g, "/").match(new RegExp("(?<=\\().+(?=:\\d+:\\d+\\))")) as RegExpMatchArray)[0].split("/");
         let depthIndex: number = 0;
-        for(depthIndex = 0; depthIndex < Math.min(options.rootPath.length, callerPath.length); depthIndex++) {
+        for(; depthIndex < Math.min(options.rootPath.length, callerPath.length); depthIndex++) {
             if(options.rootPath[depthIndex] != callerPath[depthIndex]) break;
         }
         if(depthIndex == 0) {
@@ -43,7 +46,7 @@ function getCallerFilePath(): string|undefined {
         }
         else if(depthIndex < options.rootPath.length) {
             //The caller path is branching off from hte middle of the root path.
-            return `${"../".repeat(options.rootPath.length - depthIndex - 1)}${callerPath.slice(depthIndex - callerPath.length).join("/")}`;
+            return `${"../".repeat(options.rootPath.length - depthIndex)}${callerPath.slice(depthIndex - callerPath.length).join("/")}`;
         }
         else {
             //The caller path is followed by the root path.
@@ -53,6 +56,38 @@ function getCallerFilePath(): string|undefined {
 }
 
 /******** OPTION CONTROL FUNCTIONS ********/
+
+/**
+ * Sets module root path. This is used to print relative path when outputting logs.
+ * @param newPath New path to set
+ * @throws {InvalidPathError} If specified path does not exist or is a file
+ */
+export async function setRootPath(newPath: string): Promise<void> {
+    try {
+        const stats: fs.Stats = fs.statSync(newPath);
+        if(!stats.isFile()) {
+            options.rootPath = newPath.replace(/\\/g, "/").split("/");
+            return;
+        }
+        else throw new InvalidPathError("PATH_IS_FILE");
+    }
+    catch(error: any) {
+        switch(error.code) {
+            case "ENOENT":
+                //Directory not found
+                throw new InvalidPathError("PATH_NOT_FOUND");
+                break;
+            case "EPERM":
+                //Permission denied
+                throw new InvalidPathError("PERMISSION_DENIED");
+                break;
+            default:
+                //Other errors
+                console.log(error.code);
+                break;
+        }
+    }
+}
 
 /**
  * Sets whether to output colored logs or not.
