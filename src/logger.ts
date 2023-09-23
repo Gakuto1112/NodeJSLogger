@@ -4,6 +4,8 @@
  * Module options type
  */
 type Options = {
+    /** Root path of this module. Logs include relative paths from the root path to the caller path. */
+    rootPath: string,
     /** Whether to output colored logs or not. Deprecated for file output (because control characters are outputted as normal characters). */
     coloredLog: boolean,
     /** Whether to output debug level logs or not. */
@@ -16,6 +18,7 @@ type Options = {
  * Module options
  */
 const options: Options = {
+    rootPath: process.cwd().replace(/\\/g, "/"),
     coloredLog: false,
     logDebugLevel: false
 }
@@ -29,7 +32,7 @@ const options: Options = {
 function getCallerFilePath(): string|undefined {
     const error: Error = new Error();
     if(error.stack) {
-        const filePath = error.stack.split("\n")[3].replace(/\\/g, "/").match(new RegExp(`(?<=\\(${process.cwd().replace(/\\/g, "/")}).+(?=:\\d+:\\d+\\))`));
+        const filePath = error.stack.split("\n")[3].replace(/\\/g, "/").match(new RegExp(`(?<=\\(${options.rootPath}).+(?=:\\d+:\\d+\\))`));
         if(filePath) return filePath.toString();
     }
 }
