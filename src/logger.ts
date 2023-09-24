@@ -1,4 +1,5 @@
 import fs from "fs";
+import { platform } from "os";
 import { InvalidPathError } from "./invalid_path_error";
 
 /******** OBJECT TYPES ********/
@@ -21,7 +22,7 @@ type Options = {
  * Module options
  */
 const options: Options = {
-    rootPath: process.cwd().replace(/\\/g, "/").split("/"),
+    rootPath: process.cwd().split(/[\/\\]/),
     coloredLog: false,
     logDebugLevel: false
 }
@@ -37,29 +38,32 @@ function getCallerFilePath(): string | undefined {
     const stackCountPrev: number = Error.stackTraceLimit;
     Error.prepareStackTrace = (_error: Error, stackTraces: NodeJS.CallSite[]) => {
         const filePath: string | undefined = stackTraces[2].getFileName();
-        if(filePath != undefined) return filePath.replace(/\\/g, "/");
+        if(filePath != undefined) return filePath;
     };
     Error.stackTraceLimit = 3;
     const stack: string | undefined = new Error().stack;
     Error.prepareStackTrace = stackPrev;
     Error.stackTraceLimit = stackCountPrev;
     if(stack != undefined) {
-        const callerPath: string[] = stack.split("/");
+        const callerPath: string[] = stack.split(/[\/\\]/);
         let depthIndex: number = 0;
         for(; depthIndex < Math.min(options.rootPath.length, callerPath.length); depthIndex++) {
             if(options.rootPath[depthIndex] != callerPath[depthIndex]) break;
         }
         if(depthIndex == 0) {
             //The caller path is completely different from the root path.
-            return callerPath.join("/");
+            return callerPath.join(platform() != "win32" ? "/" : "\\");
         }
         else if(depthIndex < options.rootPath.length) {
             //The caller path is branching off from hte middle of the root path.
-            return `${"../".repeat(options.rootPath.length - depthIndex)}${callerPath.slice(depthIndex - callerPath.length).join("/")}`;
+            if(platform() != "win32") return `${"../".repeat(options.rootPath.length - depthIndex)}${callerPath.slice(depthIndex - callerPath.length).join("/")}`;
+            else return `${"..\\".repeat(options.rootPath.length - depthIndex)}${callerPath.slice(depthIndex - callerPath.length).join("\\")}`;
+
         }
         else {
             //The caller path is followed by the root path.
-            return `./${callerPath.slice(depthIndex - callerPath.length).join("/")}`;
+            if(platform() != "win32") return `./${callerPath.slice(depthIndex - callerPath.length).join("/")}`;
+            else return `.\\${callerPath.slice(depthIndex - callerPath.length).join("\\")}`;
         }
     }
 }
@@ -75,7 +79,7 @@ export async function setRootPath(newPath: string): Promise<void> {
     try {
         const stats: fs.Stats = fs.statSync(newPath);
         if(!stats.isFile()) {
-            options.rootPath = newPath.replace(/\\/g, "/").split("/");
+            options.rootPath = newPath.split(/[\/\\]/);
             return;
         }
         else throw new InvalidPathError("PATH_IS_FILE");
