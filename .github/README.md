@@ -42,7 +42,7 @@ npm install @gakuto1112/nodejs-logger
 
 ## Usage
 ```js
-const logger = require("nodejs-logger");
+const logger = require("@gakuto1112/nodejs-logger");
 
 /* Debug log. Won't be outputted by default. */
 logger.debug("Debug log");
@@ -68,7 +68,7 @@ The initial value is the current directory of the terminal. You don't have to ch
 `setRootPath()` is **an asynchronous function**. Please make sure not to call log function until it returns `resolve`.
 
 ```js
-const logger = require("nodejs-logger");
+const logger = require("@gakuto1112/nodejs-logger");
 
 /* This log includes the current directory of the terminal. */
 logger.info("Prints current directory");
@@ -86,7 +86,7 @@ This option colors log level strings. It makes logs easy to see. However, it is 
 Default value is `false`.
 
 ```js
-const logger = require("nodejs-logger");
+const logger = require("@gakuto1112/nodejs-logger");
 
 /* Turn on the colored log feature. */
 logger.setColoredLog(true);
@@ -101,7 +101,7 @@ This option determines whether debug level logs should be outputted or not.
 Default value is `false`.
 
 ```js
-const logger = require("nodejs-logger");
+const logger = require("@gakuto1112/nodejs-logger");
 
 /* This log won't be outputted. */
 logger.debug("First debug log");

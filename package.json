@@ -1,5 +1,5 @@
 {
-  "name": "nodejs-logger",
+  "name": "@gakuto1112/nodejs-logger",
   "version": "1.0.0",
   "description": "Logger module that formats stdout to make it easy to see",
   "main": "out/logger.js",
