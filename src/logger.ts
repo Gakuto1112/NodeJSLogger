@@ -71,6 +71,14 @@ function getCallerFilePath(): string | undefined {
 /******** OPTION CONTROL FUNCTIONS ********/
 
 /**
+ * Gets current module root path.
+ * @returns Current root path
+ */
+export function getRootPath(): string {
+    return options.rootPath.join(platform() != "win32" ? "/" : "\\");
+}
+
+/**
  * Sets module root path. This is used to print relative path when outputting logs.
  * @param newPath New path to set
  * @throws {InvalidPathError} If specified path does not exist or is a file
@@ -103,11 +111,27 @@ export async function setRootPath(newPath: string): Promise<void> {
 }
 
 /**
+ * Gets whether to output colored logs or not.
+ * @return Whether to output colored logs or not.
+ */
+export function getColoredLog(): boolean {
+    return options.coloredLog;
+}
+
+/**
  * Sets whether to output colored logs or not.
  * @param newValue New value
  */
 export function setColoredLog(newValue: boolean): void {
     options.coloredLog = newValue;
+}
+
+/**
+ * Gets whether to output debug level logs or not.
+ * @return Whether to output debug level logs or not
+ */
+export function getLogDebugLevel(): boolean {
+    return options.logDebugLevel;
 }
 
 /**
