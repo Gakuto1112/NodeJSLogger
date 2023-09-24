@@ -26,5 +26,9 @@
   "devDependencies": {
     "@types/node": "^20.6.3",
     "ts-node": "^10.9.1"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
   }
 }
