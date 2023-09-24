@@ -60,6 +60,26 @@ logger.error("Error log");
 ## Options
 You can change log style by setting module options.
 
+### rootPath
+The origin path that used to output relative path from it to caller path when outputting logs. It must be a valid path and a directory path. Otherwise, this module will throw `InvalidPathError`.
+
+The initial value is the current directory of the terminal. You don't have to change this until you want to change module root path.
+
+`setRootPath()` is **an asynchronous function**. Please make sure not to call log function until it returns `resolve`.
+
+```js
+const logger = require("nodejs-logger");
+
+/* This log includes the current directory of the terminal. */
+logger.info("Prints current directory");
+
+/** Changes module root path. */
+logger.setRootPath("/path/to/new/root/path").then(function () => {
+   /* This log includes the new root directory. */
+   logger.info("Prints new root directory");
+});
+```
+
 ### coloredLog
 This option colors log level strings. It makes logs easy to see. However, it is recommended to turn of this option if the log is outputted to the text file (because control characters are outputted as normal characters).
 
