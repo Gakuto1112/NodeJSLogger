@@ -32,10 +32,19 @@ const options: Options = {
  * Gets the full file path of the file that called this function.
  * @returns The full file path of the file that called this function. Returns `undefined` is the file path cannot be obtained.
  */
-function getCallerFilePath(): string|undefined {
-    const error: Error = new Error();
-    if(error.stack) {
-        const callerPath: string[] = (error.stack.split("\n")[3].replace(/\\/g, "/").match(new RegExp("(?<=\\().+(?=:\\d+:\\d+\\))")) as RegExpMatchArray)[0].split("/");
+function getCallerFilePath(): string | undefined {
+    const stackPrev: ((error: Error, stackTraces: NodeJS.CallSite[]) => any) | undefined = Error.prepareStackTrace;
+    const stackCountPrev: number = Error.stackTraceLimit;
+    Error.prepareStackTrace = (_error: Error, stackTraces: NodeJS.CallSite[]) => {
+        const filePath: string | undefined = stackTraces[2].getFileName();
+        if(filePath != undefined) return filePath.replace(/\\/g, "/");
+    };
+    Error.stackTraceLimit = 3;
+    const stack: string | undefined = new Error().stack;
+    Error.prepareStackTrace = stackPrev;
+    Error.stackTraceLimit = stackCountPrev;
+    if(stack != undefined) {
+        const callerPath: string[] = stack.split("/");
         let depthIndex: number = 0;
         for(; depthIndex < Math.min(options.rootPath.length, callerPath.length); depthIndex++) {
             if(options.rootPath[depthIndex] != callerPath[depthIndex]) break;
